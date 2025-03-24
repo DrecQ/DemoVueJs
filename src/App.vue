@@ -1,19 +1,37 @@
 <template>
-  <p :style="{color: count  > 5 ? 'red' : 'green' }">
-    Compteur : {{ count }}
-  </p> 
+  <p> Compteur : {{ count }} </p> 
 
-  <div v-show="count >= 5">Bravo, vous avez atteint 5 clics</div>
-    <button @click="increment">Incrémenter</button>
-    <button @click="decrement">Décrémenter</button>
+  <button @click="increment">Incrémenter</button>
+  <button @click="decrement">Décrémenter</button>
+
+  <!-- Affichage des films -->
+   <ul>
+     <!-- Boucle pour afficher chaque film -->
+     <li v-for="movie in movies" :key="movie"> {{ movie }}  <button @click="deleteMovie(movie)">Supprimer</button> </li>
+   </ul>
 
 </template>
 
 <script setup>
-
   import { ref } from "vue";
+
+  // Création d'un ref pour stocker le compteur
   const count = ref(0)
 
+  //Creation d'un tableau 
+
+  const movies = ref([
+    'Matrix',
+    'Inception', 
+    'Eternal Sunshine of the Spotless Mind', 
+    'Pulp Fiction', 
+    'The Dark Knight', 
+    'The Godfather',
+  ])
+
+
+
+  // Méthodes pour augmenter et diminuer le compteur
   const increment= () => {
     count.value++
   };
@@ -22,5 +40,9 @@
     count.value--
   };
 
+  // Méthode pour supprimer un film
+  const deleteMovie = (movie) => {
+    movies.value = movies.value.filter(m => m!== movie)
+  };
 </script>
 
