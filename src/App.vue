@@ -1,48 +1,83 @@
 <template>
-  <p> Compteur : {{ count }} </p> 
+  <form action="" @submit.prevent="addTodo">
+    <fieldset role="group">
+      <input v-model="newTodo" type="text" placeholder="Tâche à faire" id="">
+      <button :disabled="newTodo == 0" type="submit">Ajouter</button>
+    </fieldset>
+  </form>
+ <div v-if="todos.length == 0"> Vous n'avez aucune tâche à faire </div>
 
-  <button @click="increment">Incrémenter</button>
-  <button @click="decrement">Décrémenter</button>
+ <div v-else>
+  <ul>
+    <li v-for="todo in sortedTodo()" :key="todo.date" :class="{completed: todo.completed }">
+      <label for="">
+        <input type="checkbox" v-model="todo.completed" name="" id="">
+        {{ todo.title }}
+      </label>
+    </li>
+  </ul>
 
-  <!-- Affichage des films -->
-   <ul>
-     <!-- Boucle pour afficher chaque film -->
-     <li v-for="movie in movies" :key="movie"> {{ movie }}  <button @click="deleteMovie(movie)">Supprimer</button> </li>
-   </ul>
-
+  <label for="">
+      <input type="checkbox" name="" v-model="hideCompleted" id="">
+        Masquer les tâches complétées
+  </label>
+ </div>
 </template>
 
 <script setup>
-  import { ref } from "vue";
+import { ref } from 'vue';
 
-  // Création d'un ref pour stocker le compteur
-  const count = ref(0)
+const newTodo = ref('')
 
-  //Creation d'un tableau 
+const hideCompleted = ref(false)
 
-  const movies = ref([
-    'Matrix',
-    'Inception', 
-    'Eternal Sunshine of the Spotless Mind', 
-    'Pulp Fiction', 
-    'The Dark Knight', 
-    'The Godfather',
-  ])
+//Tableau des taches 
+const todos = ref([
+  {
+    title: 'Tâche test',
+    completed: true,
+    date: 1,
+  },
+  {
+    title: 'Autre tâche',
+    completed: false,
+    date: 2,
+  }
+]);
 
+const addTodo = () => {
+  todos.value.push(
+    {
+      title: newTodo.value,
+      completed: false,
+      date: Date.now(),
+    }
+  );
 
+  newTodo.value = '';
+}
 
-  // Méthodes pour augmenter et diminuer le compteur
-  const increment= () => {
-    count.value++
-  };
+//Methode ^pour trier le tableau
 
-  const decrement= () => {
-    count.value--
-  };
+const sortedTodo = () =>{
+  const sortedTodo = todos.value.toSorted((a,b) => a.completed > b.completed  ? 1 : -1);
 
-  // Méthode pour supprimer un film
-  const deleteMovie = (movie) => {
-    movies.value = movies.value.filter(m => m!== movie)
-  };
+  if(hideCompleted.value == true)
+  {
+    return sortedTodo.filter(t => t.completed == false);
+  }
+
+  return sortedTodo;
+
+}
+
 </script>
 
+
+<style>
+  .completed
+  {
+    opacity: .5;
+    text-decoration: line-through;
+  }
+</style>
