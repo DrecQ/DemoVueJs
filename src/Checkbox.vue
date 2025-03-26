@@ -1,6 +1,6 @@
 <template>
     <label for="">
-        <input type="checkbox" name="" id="">
+        <input type="checkbox" @change="onChange" name="" id="" >
         {{ label }}
 </label>
 </template>
@@ -12,5 +12,14 @@ defineProps({
     label:  String
 });
 
+ const emits = defineEmits(['check', 'uncheck']);
+const onChange = (event) => {
+    if(event.currentTarget.checked)
+    {
+        emits('check', event.currentTarget);
+    }else{
+        emits('uncheck', event.currentTarget);
+    }
+}
 
 </script>

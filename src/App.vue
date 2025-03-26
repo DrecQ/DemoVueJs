@@ -1,93 +1,85 @@
 <template>
-  <form action="" @submit.prevent="addTodo">
+  <button @click="showTimer = !showTimer">Afficher / Masquer Timer</button>
+  <Timer v-if="showTimer" />
+
+  <form @submit.prevent="addTodo">
     <fieldset role="group">
-      <input v-model="newTodo" type="text" placeholder="Tâche à faire" id="">
-      <button :disabled="newTodo == 0" type="submit">Ajouter</button>
+      <input v-model="newTodo" type="text" placeholder="Tâche à faire">
+      <button :disabled="!newTodo.trim()" type="submit">Ajouter</button>
     </fieldset>
   </form>
- <div v-if="todos.length == 0"> Vous n'avez aucune tâche à faire </div>
 
- <div v-else>
-  <ul>
-    <li v-for="todo in sortedTodo" :key="todo.date" :class="{completed: todo.completed }">
-      <label for="">
-        <input type="checkbox" v-model="todo.completed" name="" id="">
-        {{ todo.title }}
-      </label>
-    </li>
-  </ul>
+  <div v-if="todos.length === 0">
+    Vous n'avez aucune tâche à faire
+  </div>
 
-  <label for="">
-      <input type="checkbox" name="" v-model="hideCompleted" id="">
-        Masquer les tâches complétées
-  </label>
-  <p v-if="remainingTodos >  0">
-    {{ remainingTodos }} tâche{{ remainingTodos > 1 ? 's' : '' }} à faire
-  </p>
- </div>
+  <div v-else>
+    <ul>
+      <li v-for="todo in sortedTodo" :key="todo.date">
+        <label>
+          <input type="checkbox" v-model="todo.completed">
+          <span :class="{ completed: todo.completed }">{{ todo.title }}</span>
+        </label>
+      </li>
+    </ul>
 
- <checkbox label="Bonjour" />
+    <label>
+      <input type="checkbox" v-model="hideCompleted">
+      Masquer les tâches complétées
+    </label>
+
+    <p v-if="remainingTodos > 0">
+      {{ remainingTodos }} tâche{{ remainingTodos > 1 ? 's' : '' }} à faire
+    </p>
+  </div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
-import checkbox from './checkbox.vue';
+import { computed, onMounted, ref } from 'vue';
+import Timer from './Timer.vue';
+import Button from './Button.vue';
+import Layout from './Layout.vue';
 
-const newTodo = ref('')
+const newTodo = ref('');
+const hideCompleted = ref(false);
+const todos = ref([]);
+const showTimer = ref(true);
 
-const hideCompleted = ref(false)
-
-//Tableau des taches 
-const todos = ref([
-  {
-    title: 'Tâche test',
-    completed: true,
-    date: 1,
-  },
-  {
-    title: 'Autre tâche',
-    completed: false,
-    date: 2,
+onMounted(async () => {
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/todos');
+    const data = await response.json();
+    todos.value = data.map(todo => ({
+      title: todo.title,
+      completed: todo.completed,
+      date: todo.id
+    }));
+  } catch (error) {
+    console.error('Erreur lors du chargement des tâches :', error);
   }
-]);
+});
 
 const addTodo = () => {
-  todos.value.push(
-    {
-      title: newTodo.value,
-      completed: false,
-      date: Date.now(),
-    }
-  );
-
+  if (!newTodo.value.trim()) return;
+  todos.value.push({
+    title: newTodo.value.trim(),
+    completed: false,
+    date: Date.now()
+  });
   newTodo.value = '';
-}
+};
 
-//Methode ^pour trier le tableau
+const sortedTodo = computed(() => {
+  let sorted = todos.value.slice().sort((a, b) => a.completed - b.completed);
+  return hideCompleted.value ? sorted.filter(t => !t.completed) : sorted;
+});
 
-const sortedTodo = computed(() =>{
-  const sortedTodo = todos.value.toSorted((a,b) => a.completed > b.completed  ? 1 : -1);
-
-  if(hideCompleted.value == true)
-  {
-    return sortedTodo.filter(t => t.completed == false);
-  }
-
-  return sortedTodo;
-
-})
-
-const remainingTodos = computed(() =>{
-  return todos.value.filter(t => t.completed == false).length;
-})
-
+const remainingTodos = computed(() => todos.value.filter(t => !t.completed).length);
 </script>
 
-
 <style>
-  .completed
-  {
-    opacity: .5;
-    text-decoration: line-through;
-  }
+.completed {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
 </style>
