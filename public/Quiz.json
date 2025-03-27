@@ -1,0 +1,34 @@
+{
+    "title": "Quiz sur la Programmation",
+    "minimum_score": 3,
+    "success_message": "Félicitation vous avez de bonnes bases en programmation",
+    "failure_message": "Désolé vous n'avez pas assez de bonnes réponses",
+    "questions": [
+      {
+        "question": "Quel mot-clé est utilisé pour déclarer une variable en JavaScript ?",
+        "options": ["var", "let", "const", "variable"],
+        "answer": "let"
+      },
+      {
+        "question": "Quel est le créateur du langage Python ?",
+        "options": ["Linus Torvalds", "James Gosling", "Guido van Rossum", "Dennis Ritchie"],
+        "answer": "Guido van Rossum"
+      },
+      {
+        "question": "Quelle est la complexité temporelle de la recherche dichotomique (binary search) ?",
+        "options": ["O(n)", "O(log n)", "O(n²)", "O(1)"],
+        "answer": "O(log n)"
+      },
+      {
+        "question": "Quel langage est principalement utilisé pour le développement d'applications mobiles avec Flutter ?",
+        "options": ["Kotlin", "Swift", "Dart", "Java"],
+        "answer": "Dart"
+      },
+      {
+        "question": "Quel protocole est utilisé pour sécuriser les communications sur le web ?",
+        "options": ["HTTP", "FTP", "SSH", "HTTPS"],
+        "answer": "HTTPS"
+      }
+    ]
+  }
+  
